@@ -30,11 +30,11 @@ class ChatController extends Controller
         if (Auth::check()) {
             $messages = $this->getMessageList();
             $messages = (!empty($messages)) ? $messages : $emptyMessage;
-        } else{
+        } else {
             $messages = $emptyMessage;
         }
 
-        if(Auth::check()) {
+        if (Auth::check()) {
             $user_id = Auth::user()->id;
             $user_name = Auth::user()->name;
         }
@@ -73,7 +73,7 @@ class ChatController extends Controller
                 'message' => $chat->message,
                 'author_name' => $chat->author->name,
                 'author_id' => $chat->author_id,
-                'created_at' => $chat->created_at->format('d.m.Y H:i')
+                'time' => $chat->created_at->format('d.m.Y H:i')
             ];
 
             event(new \App\Events\GetMessage($result));
@@ -88,13 +88,13 @@ class ChatController extends Controller
 
     private function getMessageList()
     {
-        $chats = Chat::orderBy('created_at','desc')->take(20)->get();
+        $chats = Chat::orderBy('created_at', 'desc')->take(20)->get();
         $chat_data = [];
 
         if (!empty($chats)) {
             foreach ($chats->reverse()->values() as $key => $chat) {
                 $chat_data[$key] = $chat;
-                $chat_data[$key]['time'] = \DateTime::createFromFormat('Y-m-d H:i:s',$chat_data[$key]['created_at'])->format('d.m.Y H:i');
+                $chat_data[$key]['time'] = \DateTime::createFromFormat('Y-m-d H:i:s', $chat_data[$key]['created_at'])->format('d.m.Y H:i');
                 $chat_data[$key]['author_name'] = $chat->author->name;
             }
         }
